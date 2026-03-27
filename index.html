@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced Python Calculator</title>
+    
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=JetBrains+Mono:wght@400;700&display=swap');
+
+        /* CSS Reset */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', sans-serif;
+        }
+
+        /* 
+           ADVANCED AESTHETIC: Deep dark theme with glowing cyan accents.
+           Simulates a high-tech terminal/developer environment.
+        */
+        body {
+            background-color: #050510;
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(0, 240, 255, 0.05) 0%, transparent 40%),
+                radial-gradient(circle at 90% 80%, rgba(112, 0, 255, 0.08) 0%, transparent 40%),
+                linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
+            background-size: 100% 100%, 100% 100%, 30px 30px, 30px 30px;
+            color: #ececec;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+            position: relative;
+        }
+
+        .container {
+            display: flex;
+            gap: 2rem;
+            max-width: 900px;
+            width: 100%;
+            flex-wrap: wrap;
+            position: relative;
+            z-index: 10;
+        }
+
+        /* High-tech Acrylic Panels */
+        .glass-panel {
+            background: rgba(10, 10, 15, 0.85);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1px solid rgba(0, 240, 255, 0.15);
+            border-top: 1px solid rgba(0, 240, 255, 0.3);
+            border-radius: 12px;
+            padding: 2.5rem;
+            box-shadow: 0 30px 60px -10px rgba(0, 0, 0, 0.9), inset 0 0 20px rgba(0, 240, 255, 0.02);
+            flex: 1;
+            min-width: 320px;
+        }
+
+        h1 {
+            font-size: 1.5rem;
+            font-weight: 300;
+            letter-spacing: 2px;
+            margin-bottom: 2rem;
+            color: #ffffff;
+            text-transform: uppercase;
+            border-bottom: 1px solid rgba(0, 240, 255, 0.2);
+            padding-bottom: 0.75rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        h1::before {
+            content: "/>";
+            color: #00f0ff;
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 700;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-size: 0.8rem;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            color: #8b8b9b;
+        }
+
+        /* Technical Input Fields */
+        input, select {
+            width: 100%;
+            padding: 1rem;
+            background: rgba(0, 0, 0, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+            color: #00f0ff;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1rem;
+            outline: none;
+            transition: all 0.3s ease;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.5);
+        }
+
+        input:focus, select:focus {
+            border-color: #00f0ff;
+            box-shadow: 0 0 15px rgba(0, 240, 255, 0.15), inset 0 2px 4px rgba(0,0,0,0.5);
+        }
+        
+        input::placeholder {
+            color: rgba(0, 240, 255, 0.2);
+        }
+
+        option {
+            background: #050510;
+            color: #00f0ff;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        /* Holographic Button */
+        button {
+            width: 100%;
+            padding: 1.2rem;
+            margin-top: 0.5rem;
+            background: transparent;
+            border: 1px solid #00f0ff;
+            border-radius: 4px;
+            color: #00f0ff;
+            font-size: 0.95rem;
+            font-weight: 600;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 0 10px rgba(0, 240, 255, 0.1);
+        }
+
+        button:hover {
+            background: rgba(0, 240, 255, 0.1);
+            box-shadow: 0 0 20px rgba(0, 240, 255, 0.3), inset 0 0 10px rgba(0, 240, 255, 0.2);
+            text-shadow: 0 0 8px rgba(0, 240, 255, 0.5);
+        }
+
+        button:active {
+            transform: scale(0.98);
+        }
+
+        /* Result Panel */
+        .result-box {
+            margin-top: 2.5rem;
+            padding: 1.5rem;
+            background: rgba(0, 255, 170, 0.05);
+            border: 1px solid rgba(0, 255, 170, 0.2);
+            border-radius: 4px;
+            text-align: center;
+            box-shadow: 0 0 20px rgba(0, 255, 170, 0.1);
+            animation: glitchFade 0.4s ease-out;
+        }
+        
+        .result-error {
+            background: rgba(255, 0, 60, 0.05);
+            border-color: rgba(255, 0, 60, 0.2);
+            box-shadow: 0 0 20px rgba(255, 0, 60, 0.1);
+        }
+
+        .result-text {
+            font-size: 1.5rem;
+            font-family: 'JetBrains Mono', monospace;
+            color: #00ffaa;
+            text-shadow: 0 0 10px rgba(0, 255, 170, 0.4);
+        }
+        
+        .result-error .result-text {
+            color: #ff003c;
+            text-shadow: 0 0 10px rgba(255, 0, 60, 0.4);
+        }
+
+        /* Advanced History List */
+        .history-list {
+            list-style: none;
+            margin-top: 1rem;
+            max-height: 380px;
+            overflow-y: auto;
+            padding-right: 5px;
+        }
+
+        .history-item {
+            padding: 1rem;
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(255,255,255,0.03);
+            border-radius: 4px;
+            margin-bottom: 0.5rem;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1rem;
+            color: #a0a0b0;
+            border-left: 3px solid #00f0ff;
+            transition: all 0.2s;
+            animation: slideIn 0.3s ease-out;
+        }
+
+        .history-item:hover { 
+            color: #ffffff; 
+            border-left-color: #7000ff; 
+            background: rgba(112, 0, 255, 0.1); 
+            transform: translateX(5px);
+        }
+
+        /* Tech Scrollbar */
+        .history-list::-webkit-scrollbar {
+            width: 4px;
+        }
+        .history-list::-webkit-scrollbar-track {
+            background: rgba(0,0,0,0.5);
+            border-radius: 4px;
+        }
+        .history-list::-webkit-scrollbar-thumb {
+            background: rgba(0, 240, 255, 0.3);
+            border-radius: 4px;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(-10px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+        
+        @keyframes glitchFade {
+            from { opacity: 0; filter: blur(4px); }
+            to { opacity: 1; filter: blur(0); }
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <!-- Input Terminal -->
+        <div class="glass-panel">
+            <h1>Calc_Terminal</h1>
+            
+            <form method="POST" action="/">
+                <div class="form-group">
+                    <label for="num1">VAR_1 [Numeric]</label>
+                    <input type="number" step="any" id="num1" name="num1" placeholder="0.0" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="operation">Operator [Method]</label>
+                    <select id="operation" name="operation">
+                        <option value="add">sys.add (+)</option>
+                        <option value="subtract">sys.subtract (-)</option>
+                        <option value="multiply">sys.multiply (*)</option>
+                        <option value="divide">sys.divide (/)</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="num2">VAR_2 [Numeric]</label>
+                    <input type="number" step="any" id="num2" name="num2" placeholder="0.0" required>
+                </div>
+
+                <button type="submit">Execute_</button>
+            </form>
+
+            {% if result %}
+                <div class="result-box {% if 'Error' in result %}result-error{% endif %}">
+                    <div class="result-text">{{ result }}</div>
+                </div>
+            {% endif %}
+        </div>
+
+        <!-- Output Log Sidebar -->
+        <div class="glass-panel">
+            <h1>Sys_Metrics</h1>
+            {% if history %}
+                <ul class="history-list">
+                    {% for item in history|reverse %}
+                        <li class="history-item">{{ item }}</li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <p style="color: #4a4a5a; text-align: center; margin-top: 3rem; font-family: 'JetBrains Mono', monospace; font-size: 0.9rem;">
+                    [ AWAITING_INPUT ]
+                </p>
+            {% endif %}
+        </div>
+    </div>
+
+</body>
+</html>
